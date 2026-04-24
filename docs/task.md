@@ -14,14 +14,15 @@
 
 ## Phase 2 — 알림 저장 API
 
-- [ ] 요청 DTO 작성 (`recipientId`, `notificationType`, `referenceData`, `channel`, `scheduledAt`)
-- [ ] 응답 DTO 작성 (`notificationId`, `status`)
-- [ ] `NotificationService.register()` 작성
-- [ ] `idempotency_key` 생성 로직 작성
-- [ ] `DataIntegrityViolationException` catch → 기존 레코드 반환
-- [ ] `NotificationRepository` 작성
-- [ ] `NotificationController` 작성 — `POST /notifications`
-- [ ] 저장 후 `202 Accepted` 반환 확인
+- [x] 요청 DTO 작성 (`recipientId`, `notificationType`, `referenceData`, `channel`, `scheduledAt`)
+- [x] 응답 DTO 작성 (`notificationId`, `status`)
+- [x] `SubmitNotificationInputPort.submit()` 작성 (inputport)
+- [x] `idempotency_key` 생성 로직 작성 (`common/util/IdempotencyKeyGenerator`)
+- [x] `DataIntegrityViolationException` catch → 기존 레코드 반환
+- [x] `NotificationJpaRepository` 작성
+- [x] `NotificationAdapter` 작성 (`NotificationOutputPort` 구현체)
+- [x] `NotificationController` 작성 — `POST /notifications`
+- [x] 저장 후 `202 Accepted` 반환 확인
 
 ---
 

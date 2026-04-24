@@ -8,6 +8,27 @@
 
 DDD + 헥사고날 아키텍처 패턴을 따른다.
 
+## 패키지 구조
+
+```
+com.jung.notificationservice
+├── common
+│   ├── domain          # BaseEntity (공통 베이스)
+│   └── util            # IdempotencyKeyGenerator 등 공통 유틸
+├── domain
+│   ├── Notification.java
+│   └── enumeration     # NotificationStatus, NotificationChannel
+├── application
+│   ├── usecase         # 유스케이스 인터페이스 (Input Port 정의)
+│   ├── inputport       # 유스케이스 구현체
+│   └── outputport      # 외부 의존성 인터페이스 (Output Port 정의)
+└── framework
+    ├── web             # Controller
+    │   ├── request     # 요청 DTO
+    │   └── response    # 응답 DTO
+    └── persistence     # JpaRepository, Adapter (Output Port 구현체)
+```
+
 ## Git 커밋 컨벤션
 
 | 타입 | 설명 |
