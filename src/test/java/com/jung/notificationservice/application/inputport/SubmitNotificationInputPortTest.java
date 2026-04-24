@@ -4,7 +4,7 @@ import com.jung.notificationservice.application.usecase.SubmitNotificationUseCas
 import com.jung.notificationservice.domain.Notification;
 import com.jung.notificationservice.domain.enumeration.NotificationChannel;
 import com.jung.notificationservice.domain.enumeration.NotificationStatus;
-import com.jung.notificationservice.framework.persistence.NotificationJpaRepository;
+import com.jung.notificationservice.infra.persistence.NotificationJpaRepository;
 import com.jung.notificationservice.framework.web.request.NotificationRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;

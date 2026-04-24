@@ -28,7 +28,7 @@
 
 ## Phase 3 — 비동기 발송 처리
 
-- [ ] `NotificationMessagePort` 인터페이스 정의
+- [x] `NotificationMessageOutputPort` 인터페이스 정의
 - [ ] `MockEmailSender` 작성 (로그 출력)
 - [ ] `MockInAppSender` 작성 (로그 출력)
 - [ ] `NotificationProcessor.processOne()` 작성 (CAS UPDATE)
