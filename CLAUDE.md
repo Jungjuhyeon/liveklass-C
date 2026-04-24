@@ -37,6 +37,12 @@ com.jung.notificationservice
 | Service (InputPort) | `@SpringBootTest` 통합 테스트 — 실제 MySQL 연결, `@AfterEach`로 데이터 정리 |
 | Controller | `MockMvcBuilders.standaloneSetup` + `@ExtendWith(MockitoExtension.class)` — Spring Context 없이 Mock 사용 |
 
+## 문서
+
+- [spec.md](docs/spec.md) — 요구사항 및 기능 명세
+- [plan.md](docs/plan.md) — 기술 설계 및 단계별 구현 계획
+- [task.md](docs/task.md) — 구현 체크리스트
+
 ## Git 커밋 컨벤션
 
 | 타입 | 설명 |
