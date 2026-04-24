@@ -29,12 +29,12 @@
 ## Phase 3 — 비동기 발송 처리
 
 - [x] `NotificationMessageOutputPort` 인터페이스 정의
-- [ ] `MockEmailSender` 작성 (로그 출력)
-- [ ] `MockInAppSender` 작성 (로그 출력)
-- [ ] `NotificationProcessor.processOne()` 작성 (CAS UPDATE)
-- [ ] `SpringNotificationMessageAdapter` 작성 (`@Async`)
-- [ ] `TransactionSynchronizationAdapter` 등록 (AFTER_COMMIT)
-- [ ] `AsyncConfig` 스레드풀 설정 + `@EnableAsync`
+- [x] `EmailNotificationSender` 작성 (로그 출력)
+- [x] `InAppNotificationSender` 작성 (로그 출력)
+- [x] `NotificationProcessor.processOne()` 작성 (CAS UPDATE)
+- [x] `SpringNotificationMessageAdapter` 작성 (`@Async`)
+- [x] `ApplicationEventPublisher` + `@TransactionalEventListener(AFTER_COMMIT)` 등록
+- [x] `AsyncConfig` 스레드풀 설정 + `@EnableAsync`
 
 ---
 
