@@ -29,6 +29,14 @@ com.jung.notificationservice
     └── persistence     # JpaRepository, Adapter (Output Port 구현체)
 ```
 
+## 테스트 전략
+
+| 대상 | 방식 |
+|---|---|
+| 도메인 엔티티 | 순수 단위 테스트 — JPA, Spring Context 의존 금지 |
+| Service (InputPort) | `@SpringBootTest` 통합 테스트 — 실제 MySQL 연결, `@AfterEach`로 데이터 정리 |
+| Controller | `MockMvcBuilders.standaloneSetup` + `@ExtendWith(MockitoExtension.class)` — Spring Context 없이 Mock 사용 |
+
 ## Git 커밋 컨벤션
 
 | 타입 | 설명 |
