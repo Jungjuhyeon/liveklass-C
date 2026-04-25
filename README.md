@@ -224,7 +224,7 @@ FAILED ──(수동 재시도 API)──> PENDING  ※ retryCount = 0 초기화
 
 ## ✅ 요구사항 해석 및 가정
 
-### 📍 과제를 바라보는 세 가지 관점
+### 1. 과제를 바라보는 세 가지 관점
 
 이 과제를 처음 봤을 때 알림 시스템의 설계가 세 가지 관점으로 나뉜다고 생각했습니다.
 
@@ -245,24 +245,18 @@ FAILED ──(수동 재시도 API)──> PENDING  ※ retryCount = 0 초기화
 
 이 세 가지 관점 중, "실제 메시지 브로커 설치 불필요. 단, 실제 운영 환경으로 전환 가능한 구조여야 함"이라는 제약사항을 고려하여 **1번 모놀리식 관점**을 기준으로 구현하되, `NotificationMessageOutputPort` 인터페이스 추상화를 통해 2번, 3번으로 전환 가능한 구조를 갖추었습니다.
 
-<br>
-
-### 📍 알림 처리 실패가 비즈니스 트랜잭션에 영향을 주어서는 안 됩니다
+### 2. 알림 처리 실패가 비즈니스 트랜잭션에 영향을 주어서는 안 됩니다
 
 - **발송 실패**(이메일 서버 오류, 네트워크 장애 등)가 비즈니스에 영향을 주면 안 된다고 해석했습니다.
 - 알림 저장은 BEFORE_COMMIT에서 비즈니스 트랜잭션과 함께 처리하여 원자성을 보장하고, 실제 발송은 AFTER_COMMIT 이후 @Async로 별도 스레드에서 처리합니다.
 - 발송 실패 시 예외를 무시하지 않고 RETRYING/FAILED 상태로 관리하며, lastErrorMessage에 실패 사유를 기록합니다.
 
-<br>
-
-### 📍 실제 메시지 브로커 없이 구현하되, 운영 환경으로 전환 가능한 구조
+### 3. 실제 메시지 브로커 없이 구현하되, 운영 환경으로 전환 가능한 구조
 
 - `NotificationMessageOutputPort` 인터페이스로 추상화하여 현재는 `SpringNotificationMessageAdapter`(@Async 직접 호출)를 사용합니다.
 - Kafka 도입 시 `KafkaNotificationMessageAdapter` 구현체만 교체하면 되며, 도메인, 애플리케이션, 퍼시스턴스, 웹 레이어는 변경 없이 전환 가능합니다.
 
-<br>
-
-### 📍 동일한 이벤트에 대해 알림이 중복 발송되면 안 됩니다
+### 4. 동일한 이벤트에 대해 알림이 중복 발송되면 안 됩니다
 
 - **요청 레벨**: `findByIdempotencyKey`로 사전 체크하여 대부분의 중복을 예외 없이 처리하고, DB UNIQUE 제약이 race condition에 대한 안전망 역할을 합니다.
 - **처리 레벨**: CAS UPDATE(`UPDATE WHERE status IN (PENDING, RETRYING)`)로 동시 처리 방지. affected_rows가 0이면 skip합니다.
