@@ -117,7 +117,7 @@ class NotificationControllerTest {
                 "ENROLLMENT_COMPLETE", "{}", NotificationChannel.EMAIL, null);
         given(retryNotificationUseCase.retry(1L)).willReturn(notification);
 
-        mockMvc.perform(post("/api/notifications/1/retry"))
+        mockMvc.perform(patch("/api/notifications/1/retry"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.status").value("PENDING"));
     }
@@ -128,7 +128,7 @@ class NotificationControllerTest {
         given(retryNotificationUseCase.retry(1L))
                 .willThrow(new BusinessException(ErrorCode.NOTIFICATION_NOT_RETRYABLE));
 
-        mockMvc.perform(post("/api/notifications/1/retry"))
+        mockMvc.perform(patch("/api/notifications/1/retry"))
                 .andExpect(status().isBadRequest());
     }
 

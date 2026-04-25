@@ -56,7 +56,7 @@ public class NotificationController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
-    @PostMapping("/{id}/retry")
+    @PatchMapping("/{id}/retry")
     public ResponseEntity<ApiResponse<NotificationResponse>> retry(@PathVariable Long id) {
         Notification notification = retryNotificationUseCase.retry(id);
         return ResponseEntity.ok(ApiResponse.success(NotificationResponse.mapToDTO(notification)));
