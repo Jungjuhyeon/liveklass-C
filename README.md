@@ -378,6 +378,25 @@ FAILED 상태의 알림은 삭제되지 않고 DB에 보관되며, `lastErrorMes
 - 재시도 시 **retryCount를 0으로 초기화**합니다. 초기화하지 않으면 이미 최대 재시도 횟수에 도달한 상태이므로 재시도 즉시 다시 FAILED가 됩니다.
 - 운영자가 원인을 확인하고 조치한 뒤 재시도하는 맥락이므로, 초기화하여 새로운 재시도 사이클을 시작하는 것이 적절합니다.
 
+## ✅ 요구사항 대응 정리
+
+| 요구사항 | 구현 방법 |
+|---|---|
+| API 스레드와 분리 | `AFTER_COMMIT` + `SpringNotificationMessageAdapter` `@Async` |
+| 비즈니스 트랜잭션 영향 없음 | `AFTER_COMMIT` 이후 발송, 발송 실패가 비즈니스에 전파되지 않음 |
+| 예외 단순 무시 아님 | `markRetryingOrFailed()`로 RETRYING/FAILED 상태 관리 + `lastErrorMessage` 기록 |
+| 재시도 | Exponential Backoff (`2^retryCount`분, 최대 3회) |
+| 중복 발송 방지 | `idempotency_key` UNIQUE 제약 + `findByIdempotencyKey` 사전 체크 |
+| 동시 중복 처리 방지 | CAS UPDATE (`UPDATE WHERE status IN ('PENDING', 'RETRYING')`) |
+| PROCESSING 타임아웃 복구 | `NotificationRecoveryWorker` 5분마다 10분 초과 건 PENDING 복구 |
+| 서버 재시작 유실 없음 | DB 영속 저장 + `NotificationPollingWorker` 10초마다 재처리 |
+| 다중 인스턴스 중복 방지 | CAS UPDATE (`affected_rows=0`이면 skip) |
+| 읽음 처리 동시 요청 | `UPDATE WHERE is_read = false` 멱등성 보장 |
+| 수동 재시도 | FAILED → PENDING 전환, `retryCount` 0 초기화 |
+| Kafka 전환 | `NotificationMessageOutputPort` 구현체만 교체 |
+| 예약 발송 | `scheduledAt` 컬럼 + 폴링 쿼리 `WHERE scheduledAt <= :now` 조건 |
+| 알림 템플릿 | `notification_templates` 테이블 + `{변수}` 치환, 없으면 기본 템플릿 발송 |
+
 ## ✅ 테스트 실행 방법
 
 ### 사전 요구사항
