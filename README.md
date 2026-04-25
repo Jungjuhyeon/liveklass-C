@@ -47,7 +47,7 @@ MySQL이 `localhost:3306`에 실행됩니다. (DB: `notification`, 계정: `admi
 ### 1. 알림 발송 요청 등록
 
 ```
-POST /api/notifications
+POST http://localhost:8080/api/notifications
 ```
 
 **Request**
@@ -79,7 +79,7 @@ POST /api/notifications
 ### 2. 알림 단건 상태 조회
 
 ```
-GET /api/notifications/{id}
+GET http://localhost:8080/api/notifications/{id}
 ```
 
 **Response** `200 OK`
@@ -105,7 +105,7 @@ GET /api/notifications/{id}
 ### 3. 사용자 알림 목록 조회
 
 ```
-GET /api/notifications?recipientId=1&isRead=false
+GET http://localhost:8080/api/notifications?recipientId=1&isRead=false
 ```
 
 **Response** `200 OK`
@@ -133,7 +133,7 @@ GET /api/notifications?recipientId=1&isRead=false
 ### 4. 읽음 처리
 
 ```
-PATCH /api/notifications/{id}/read
+PATCH http://localhost:8080/api/notifications/{id}/read
 ```
 
 **Response** `200 OK`
@@ -143,7 +143,7 @@ PATCH /api/notifications/{id}/read
 ### 5. 수동 재시도
 
 ```
-POST /api/notifications/{id}/retry
+POST http://localhost:8080/api/notifications/{id}/retry
 ```
 
 **Response** `200 OK`
