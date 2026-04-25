@@ -325,6 +325,59 @@ processOne() ← 트랜잭션 없음
 - 일시적 장애에 대해 점진적으로 간격을 넓혀 재시도합니다.
 - FAILED 상태는 자동 재시도 대상에서 제외되며, 운영자가 원인 확인 후 수동 재시도(retryCount 초기화) 할 수 있습니다.
 
+## ✅ 선택 구현 항목
+
+### 1. 발송 스케줄링
+
+`scheduledAt` 필드를 통해 특정 시각에 발송을 예약할 수 있습니다. `scheduledAt`이 null이면 즉시 발송 대상이고, 값이 있으면 해당 시각 이후에 폴링 워커가 조회하여 처리합니다.
+
+```sql
+WHERE status IN ('PENDING', 'RETRYING')
+AND (scheduled_at IS NULL OR scheduled_at <= :now)
+AND (next_retry_at IS NULL OR next_retry_at <= :now)
+```
+
+### 2. 알림 템플릿 관리
+
+`notification_templates` 테이블에 알림 타입 + 채널 조합별 메시지 템플릿을 관리합니다.
+
+- `titleTemplate`, `bodyTemplate`에 `{변수명}` 플레이스홀더를 사용
+- 발송 시 `referenceData` JSON을 `ReferenceDataParser`로 파싱하여 변수 치환 후 발송
+- 템플릿이 없는 경우 기본 템플릿(알림 타입을 제목으로 사용)으로 발송하여 알림 유실을 방지
+
+```
+// 템플릿 예시
+titleTemplate: "{lectureName} 수강 신청 완료"
+bodyTemplate: "안녕하세요 {userName}님, {lectureName} 강의 수강 신청이 완료되었습니다."
+
+// referenceData
+{"lectureName": "스프링 부트", "userName": "홍길동"}
+
+// 치환 결과
+title: "스프링 부트 수강 신청 완료"
+body: "안녕하세요 홍길동님, 스프링 부트 강의 수강 신청이 완료되었습니다."
+```
+
+### 3. 읽음 처리 — 여러 기기 동시 요청
+
+`UPDATE WHERE is_read = false` 조건 하나로 멱등성을 보장합니다.
+
+```sql
+UPDATE notifications SET is_read = true
+WHERE id = :id AND is_read = false
+```
+
+- 여러 기기에서 동시에 읽음 처리 요청이 와도 첫 번째 요청만 affected_rows=1이고, 나머지는 affected_rows=0으로 한 번만 처리됩니다.
+- 별도의 락 없이 SQL 조건만으로 동시성을 해결합니다.
+
+### 4. 최종 실패 알림 보관 및 수동 재시도
+
+FAILED 상태의 알림은 삭제되지 않고 DB에 보관되며, `lastErrorMessage`에 실패 사유가 기록되어 운영자가 원인을 확인할 수 있습니다.
+
+- `PATCH /api/notifications/{id}/retry` API로 수동 재시도가 가능합니다.
+- 재시도 시 **retryCount를 0으로 초기화**합니다. 초기화하지 않으면 이미 최대 재시도 횟수에 도달한 상태이므로 재시도 즉시 다시 FAILED가 됩니다.
+- 운영자가 원인을 확인하고 조치한 뒤 재시도하는 맥락이므로, 초기화하여 새로운 재시도 사이클을 시작하는 것이 적절합니다.
+
 ## ✅ 테스트 실행 방법
 
 ### 사전 요구사항
