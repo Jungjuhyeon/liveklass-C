@@ -187,7 +187,7 @@ PATCH http://localhost:8080/api/notifications/{id}/retry
 | created_at | DATETIME | 생성 시각 |
 | updated_at | DATETIME | 수정 시각 |
 
-**인덱스**: `idx_recipient_id`, `idx_status`, `idx_next_retry_at`
+**인덱스**: `idx_status_scheduled_retry(status, scheduled_at, next_retry_at)`, `idx_status_processing_started(status, processing_started_at)`, `idx_recipient_is_read(recipient_id, is_read)`
 
 ### notification_templates 테이블
 
