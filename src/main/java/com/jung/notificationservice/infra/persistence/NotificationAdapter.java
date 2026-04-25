@@ -4,10 +4,10 @@ import com.jung.notificationservice.application.outputport.NotificationOutputPor
 import com.jung.notificationservice.domain.Notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,7 +17,6 @@ public class NotificationAdapter implements NotificationOutputPort {
     private final NotificationJpaRepository notificationJpaRepository;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Notification save(Notification notification) {
         return notificationJpaRepository.save(notification);
     }
@@ -36,5 +35,28 @@ public class NotificationAdapter implements NotificationOutputPort {
     @Transactional
     public int markAsProcessing(Long id, LocalDateTime now) {
         return notificationJpaRepository.markAsProcessing(id, now);
+    }
+
+    @Override
+    public List<String> findPendingKeys(LocalDateTime now) {
+        return notificationJpaRepository.findPendingKeys(now);
+    }
+
+    @Override
+    public int recoverStuckProcessing(LocalDateTime threshold, LocalDateTime now) {
+        return notificationJpaRepository.recoverStuckProcessing(threshold, now);
+    }
+
+    @Override
+    public List<Notification> findByRecipientId(Long recipientId, Boolean isRead) {
+        if (isRead == null) {
+            return notificationJpaRepository.findByRecipientId(recipientId);
+        }
+        return notificationJpaRepository.findByRecipientIdAndIsRead(recipientId, isRead);
+    }
+
+    @Override
+    public int markAsRead(Long id, LocalDateTime now) {
+        return notificationJpaRepository.markAsRead(id, now);
     }
 }

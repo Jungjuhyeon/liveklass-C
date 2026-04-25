@@ -1,5 +1,6 @@
 package com.jung.notificationservice.infra.sender;
 
+import com.jung.notificationservice.application.outputport.NotificationSendOutputPort;
 import com.jung.notificationservice.common.exception.BusinessException;
 import com.jung.notificationservice.common.response.ErrorCode;
 import com.jung.notificationservice.domain.Notification;
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class NotificationSenderRouter {
+public class NotificationSenderRouter implements NotificationSendOutputPort {
 
     private final List<NotificationSender> senders;
 

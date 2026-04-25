@@ -27,25 +27,27 @@ public class Notification extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true, length = 64)
+    private String idempotencyKey;
+
     @Column(nullable = false)
     private Long recipientId;
 
-    @Column(nullable = false, length = 100)
-    private String notificationType;
+    private String eventId; //AggregateId
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private NotificationChannel channel;
+    @Column(nullable = false, length = 100)
+    private String notificationType; //이벤트 타입(aggregateType)
 
     @Column(columnDefinition = "TEXT")
     private String referenceData;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private NotificationStatus status;
+    private NotificationChannel channel; //발송채널
 
-    @Column(nullable = false, unique = true, length = 64)
-    private String idempotencyKey;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private NotificationStatus status;
 
     @Column(nullable = false)
     private int retryCount;
@@ -67,23 +69,50 @@ public class Notification extends BaseEntity {
 
     private LocalDateTime nextRetryAt;
 
-    private Notification(Long recipientId, String notificationType, NotificationChannel channel,
-                         String referenceData, String idempotencyKey, LocalDateTime scheduledAt) {
-        this.recipientId = recipientId;
-        this.notificationType = notificationType;
-        this.channel = channel;
-        this.referenceData = referenceData;
+    private Notification(String idempotencyKey, Long recipientId, String eventId, String notificationType,
+                         String referenceData, NotificationChannel channel, LocalDateTime scheduledAt) {
         this.idempotencyKey = idempotencyKey;
+        this.recipientId = recipientId;
+        this.eventId = eventId;
+        this.notificationType = notificationType;
+        this.referenceData = referenceData;
+        this.channel = channel;
         this.scheduledAt = scheduledAt;
+
         this.status = NotificationStatus.PENDING;
         this.retryCount = 0;
         this.maxRetryCount = 3;
         this.isRead = false;
     }
 
-    public static Notification create(Long recipientId, String notificationType,
-                                      NotificationChannel channel, String referenceData,
-                                      String idempotencyKey, LocalDateTime scheduledAt) {
-        return new Notification(recipientId, notificationType, channel, referenceData, idempotencyKey, scheduledAt);
+    public static Notification create(String idempotencyKey, Long recipientId,
+                                      String eventId, String notificationType,
+                                      String referenceData, NotificationChannel channel, LocalDateTime scheduledAt){
+        return new Notification(idempotencyKey, recipientId, eventId, notificationType, referenceData, channel,scheduledAt);
+    }
+
+    public void resetForRetry() {
+        this.status = NotificationStatus.PENDING;
+        this.retryCount = 0;
+        this.lastErrorMessage = null;
+        this.nextRetryAt = null;
+        this.processingStartedAt = null;
+    }
+
+    public void markCompleted() {
+        this.status = NotificationStatus.COMPLETED;
+        this.processedAt = LocalDateTime.now();
+    }
+
+    public void markRetryingOrFailed(String errorMessage) {
+        this.lastErrorMessage = errorMessage;
+        this.retryCount++;
+        if (this.retryCount > this.maxRetryCount) {
+            this.status = NotificationStatus.FAILED;
+            this.nextRetryAt = null;
+        } else {
+            this.status = NotificationStatus.RETRYING;
+            this.nextRetryAt = LocalDateTime.now().plusMinutes((long) Math.pow(2, retryCount));
+        }
     }
 }

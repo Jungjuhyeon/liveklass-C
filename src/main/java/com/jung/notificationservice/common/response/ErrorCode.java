@@ -13,7 +13,8 @@ public enum ErrorCode {
 
     // Notification
     NOTIFICATION_NOT_FOUND(404, "NOTIFICATION_404", "알림을 찾을 수 없습니다."),
-    NOTIFICATION_DUPLICATE(409, "NOTIFICATION_409", "이미 접수된 알림 요청입니다.");
+    NOTIFICATION_DUPLICATE(409, "NOTIFICATION_409", "이미 접수된 알림 요청입니다."),
+    NOTIFICATION_NOT_RETRYABLE(400, "NOTIFICATION_400", "FAILED 상태의 알림만 수동 재시도할 수 있습니다.");
 
     private final Integer httpStatus;
     private final String code;

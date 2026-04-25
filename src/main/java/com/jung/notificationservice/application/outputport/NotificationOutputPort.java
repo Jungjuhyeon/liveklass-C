@@ -3,6 +3,7 @@ package com.jung.notificationservice.application.outputport;
 import com.jung.notificationservice.domain.Notification;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface NotificationOutputPort {
@@ -14,4 +15,12 @@ public interface NotificationOutputPort {
     Optional<Notification> findByIdempotencyKey(String idempotencyKey);
 
     int markAsProcessing(Long id, LocalDateTime now);
+
+    List<String> findPendingKeys(LocalDateTime now);
+
+    int recoverStuckProcessing(LocalDateTime threshold, LocalDateTime now);
+
+    List<Notification> findByRecipientId(Long recipientId, Boolean isRead);
+
+    int markAsRead(Long id, LocalDateTime now);
 }
