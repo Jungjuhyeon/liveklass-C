@@ -2,6 +2,7 @@ package com.jung.notificationservice.common.exception;
 
 import com.jung.notificationservice.common.response.ApiResponse;
 import com.jung.notificationservice.common.response.ErrorCode;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -44,10 +45,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(ApiResponse.fail(ErrorCode.INVALID_INPUT));
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleConstraintViolation(ConstraintViolationException e) {
+        log.warn("ConstraintViolationException: {}", e.getMessage());
+        return ResponseEntity.status(ErrorCode.INVALID_INPUT.getHttpStatus())
+                .body(ApiResponse.fail(ErrorCode.INVALID_INPUT));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(final Exception e) {
-        log.warn("handleException", e);
+        // log.warn 대신 log.error 사용 (운영 도구에서 500 에러 알림을 받기 위함)
+        log.error("handleException", e);
         return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getHttpStatus())
                 .body(ApiResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR));
     }
+
 }
