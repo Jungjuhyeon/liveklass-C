@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 @Table(
     name = "notifications",
     indexes = {
-        @Index(name = "idx_recipient_id", columnList = "recipient_id"),
-        @Index(name = "idx_status", columnList = "status"),
-        @Index(name = "idx_next_retry_at", columnList = "next_retry_at")
+        @Index(name = "idx_status_scheduled_retry", columnList = "status, scheduled_at, next_retry_at"),
+        @Index(name = "idx_status_processing_started", columnList = "status, processing_started_at"),
+        @Index(name = "idx_recipient_is_read", columnList = "recipient_id, is_read")
     }
 )
 @Getter
