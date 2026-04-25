@@ -1,5 +1,6 @@
 package com.jung.notificationservice.framework.web.response;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.jung.notificationservice.domain.Notification;
 import com.jung.notificationservice.domain.enumeration.NotificationChannel;
 import com.jung.notificationservice.domain.enumeration.NotificationStatus;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
+@JsonPropertyOrder({"notificationId", "status", "channel", "retryCount", "lastErrorMessage", "createdAt", "processedAt", "read"})
 public class NotificationDetailResponse {
 
     private final Long notificationId;
