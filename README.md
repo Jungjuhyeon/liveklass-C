@@ -143,7 +143,7 @@ PATCH http://localhost:8080/api/notifications/{id}/read
 ### 5. 수동 재시도
 
 ```
-POST http://localhost:8080/api/notifications/{id}/retry
+PATCH http://localhost:8080/api/notifications/{id}/retry
 ```
 
 **Response** `200 OK`

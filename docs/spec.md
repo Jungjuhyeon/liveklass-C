@@ -110,7 +110,7 @@ PATCH /api/notifications/{id}/read
 ### 4.5 수동 재시도
 
 ```
-POST /api/notifications/{id}/retry
+PATCH /api/notifications/{id}/retry
 ```
 
 **Response** `200 OK`

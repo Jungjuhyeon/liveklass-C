@@ -60,7 +60,7 @@
 - [x] `GET /api/notifications/{id}` — 단건 상태 조회
 - [x] `GET /api/notifications?recipientId=&isRead=` — 목록 조회
 - [x] `PATCH /api/notifications/{id}/read` — 읽음 처리
-- [x] `POST /api/notifications/{id}/retry` — FAILED 알림 수동 재시도 (PENDING 전환 + retryCount 0 초기화)
+- [x] `PATCH /api/notifications/{id}/retry` — FAILED 알림 수동 재시도 (PENDING 전환 + retryCount 0 초기화)
 
 ---
 
