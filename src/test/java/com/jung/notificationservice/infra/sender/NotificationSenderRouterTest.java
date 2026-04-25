@@ -31,8 +31,8 @@ class NotificationSenderRouterTest {
         given(emailSender.supportedChannel()).willReturn(NotificationChannel.EMAIL);
         NotificationSenderRouter router = new NotificationSenderRouter(List.of(emailSender, inAppSender));
 
-        Notification notification = Notification.create(1L, "ENROLLMENT_COMPLETE",
-                NotificationChannel.EMAIL, "{}", "key-001", LocalDateTime.now());
+        Notification notification = Notification.create(
+                "key-001", 1L, null, "ENROLLMENT_COMPLETE", "{}", NotificationChannel.EMAIL, LocalDateTime.now());
 
         router.send(notification);
 
@@ -46,8 +46,8 @@ class NotificationSenderRouterTest {
         given(inAppSender.supportedChannel()).willReturn(NotificationChannel.IN_APP);
         NotificationSenderRouter router = new NotificationSenderRouter(List.of(emailSender, inAppSender));
 
-        Notification notification = Notification.create(1L, "ENROLLMENT_COMPLETE",
-                NotificationChannel.IN_APP, "{}", "key-002", LocalDateTime.now());
+        Notification notification = Notification.create(
+                "key-002", 1L, null, "ENROLLMENT_COMPLETE", "{}", NotificationChannel.IN_APP, LocalDateTime.now());
 
         router.send(notification);
 
@@ -61,8 +61,8 @@ class NotificationSenderRouterTest {
         given(inAppSender.supportedChannel()).willReturn(NotificationChannel.EMAIL);
         NotificationSenderRouter router = new NotificationSenderRouter(List.of(emailSender, inAppSender));
 
-        Notification notification = Notification.create(1L, "ENROLLMENT_COMPLETE",
-                NotificationChannel.IN_APP, "{}", "key-003", LocalDateTime.now());
+        Notification notification = Notification.create(
+                "key-003", 1L, null, "ENROLLMENT_COMPLETE", "{}", NotificationChannel.IN_APP, LocalDateTime.now());
 
         assertThatThrownBy(() -> router.send(notification))
                 .isInstanceOf(BusinessException.class);
