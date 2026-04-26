@@ -420,10 +420,10 @@ FAILED 상태의 알림은 삭제되지 않고 DB에 보관되며, `lastErrorMes
 | 대상 | 방식 | 테스트 수 |
 |---|---|---|
 | 도메인 엔티티 (Notification, NotificationTemplate, ReferenceDataParser) | 순수 단위 테스트 | 13 |
-| Service / InputPort (Submit, Inquiry, Read, Retry, Recovery) | @SpringBootTest 통합 테스트 (실제 MySQL) | 13 |
+| Service / Processor (Submit, Inquiry, Read, Retry, Recovery, Polling, Persistence, Processor) | @SpringBootTest 통합 테스트 (실제 MySQL) | 22 |
 | Controller | MockMvcBuilders.standaloneSetup + Mockito | 7 |
-| 단순 컴포넌트 (Router, Sender, Listener) | @ExtendWith(MockitoExtension.class) | 12 |
-| **합계** | | **45** |
+| 단순 컴포넌트 (Router, Sender, Listener) | @ExtendWith(MockitoExtension.class) | 10 |
+| **합계** | | **53** |
 
 ## ✅ 미구현 / 제약사항
 
