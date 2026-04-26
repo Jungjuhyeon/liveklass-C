@@ -1,6 +1,6 @@
 package com.jung.notificationservice.framework.listener;
 
-import com.jung.notificationservice.application.usecase.SaveNotificationUseCase;
+import com.jung.notificationservice.application.usecase.UpsertNotificationUseCase;
 import com.jung.notificationservice.application.outputport.NotificationMessageOutputPort;
 import com.jung.notificationservice.application.outputport.NotificationOutputPort;
 import com.jung.notificationservice.common.util.IdempotencyKeyGenerator;
@@ -31,7 +31,7 @@ class NotificationDomainEventListenerTest {
     private NotificationMessageOutputPort messagePort;
 
     @Mock
-    private SaveNotificationUseCase saveNotificationUseCase;
+    private UpsertNotificationUseCase upsertNotificationUseCase;
 
     @InjectMocks
     private NotificationDomainEventListener listener;
@@ -43,7 +43,7 @@ class NotificationDomainEventListenerTest {
 
         listener.saveNotification(event);
 
-        verify(saveNotificationUseCase).saveIfAbsent(any(Notification.class));
+        verify(upsertNotificationUseCase).upsert(any(Notification.class));
     }
 
     @Test

@@ -2,7 +2,7 @@ package com.jung.notificationservice.framework.listener;
 
 import com.jung.notificationservice.application.outputport.NotificationMessageOutputPort;
 import com.jung.notificationservice.application.outputport.NotificationOutputPort;
-import com.jung.notificationservice.application.usecase.SaveNotificationUseCase;
+import com.jung.notificationservice.application.usecase.UpsertNotificationUseCase;
 import com.jung.notificationservice.common.util.IdempotencyKeyGenerator;
 import com.jung.notificationservice.domain.Notification;
 import com.jung.notificationservice.domain.event.NotificationDomainEvent;
@@ -20,7 +20,7 @@ public class NotificationDomainEventListener {
 
     private final NotificationOutputPort repositoryPort;
     private final NotificationMessageOutputPort messagePort;
-    private final SaveNotificationUseCase saveNotificationUseCase;
+    private final UpsertNotificationUseCase upsertNotificationUseCase;
 
     // ── 도메인 이벤트 경로 ──
     // BEFORE_COMMIT: 비즈니스 트랜잭션과 함께 DB 저장 (원자성 보장)
@@ -30,7 +30,7 @@ public class NotificationDomainEventListener {
         String key = IdempotencyKeyGenerator.generate(
                 event.getEventId(), event.getRecipientId(), event.getNotificationType(), event.getChannel()
         );
-        saveNotificationUseCase.saveIfAbsent(
+        upsertNotificationUseCase.upsert(
                 Notification.create(
                         key, event.getRecipientId(), event.getEventId(),
                         event.getNotificationType(), event.getReferenceData(),

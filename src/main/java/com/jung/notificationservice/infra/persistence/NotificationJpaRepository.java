@@ -46,4 +46,13 @@ public interface NotificationJpaRepository extends JpaRepository<Notification, L
             "WHERE n.id = :id " +
             "AND n.isRead = false")
     int markAsRead(@Param("id") Long id, @Param("now") LocalDateTime now);
+
+    @Modifying
+    @Query(value = "INSERT INTO notifications " +
+            "(idempotency_key, recipient_id, event_id, notification_type, reference_data, " +
+            "channel, status, retry_count, max_retry_count, is_read, scheduled_at, created_at, updated_at) " +
+            "VALUES (:#{#n.idempotencyKey}, :#{#n.recipientId}, :#{#n.eventId}, :#{#n.notificationType}, :#{#n.referenceData}, " +
+            ":#{#n.channel.name()}, :#{#n.status.name()}, :#{#n.retryCount}, :#{#n.maxRetryCount}, :#{#n.read}, :#{#n.scheduledAt}, NOW(), NOW()) " +
+            "ON DUPLICATE KEY UPDATE id = id", nativeQuery = true)
+    int upsert(@Param("n") Notification n);
 }

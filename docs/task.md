@@ -18,7 +18,7 @@
 - [x] 응답 DTO 작성 (`notificationId`, `status`)
 - [x] `SubmitNotificationInputPort.submit()` 작성 (inputport)
 - [x] `idempotency_key` 생성 로직 작성 (`common/util/IdempotencyKeyGenerator`)
-- [x] `SaveNotificationUseCase` + `NotificationPersistenceService` 작성 (중복 체크 후 저장)
+- [x] `UpsertNotificationUseCase` + `NotificationPersistenceService` 작성 (UPSERT 전략으로 중복 방지)
 - [x] `NotificationJpaRepository` 작성
 - [x] `NotificationAdapter` 작성 (`NotificationOutputPort` 구현체)
 - [x] `NotificationController` 작성 — `POST /api/notifications`

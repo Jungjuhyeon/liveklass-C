@@ -32,7 +32,7 @@
 > `POST /api/notifications` 요청을 받아 DB에 저장하고 202를 반환한다
 
 - 저장만 하고 발송은 하지 않음 (발송은 Phase 3에서)
-- 저장 전 `findByIdempotencyKey`로 중복 체크하여 이미 존재하면 skip (멱등성)
+- UPSERT (`ON DUPLICATE KEY UPDATE`) 전략으로 중복 요청 시 예외 없이 무시 (멱등성)
 - `idempotency_key` = `SHA256(eventId:recipientId:notificationType:channel)`
 - `eventId` — 비즈니스 이벤트 식별자 (멱등성 키 생성용), `referenceData` — 부가 참조 데이터 JSON (템플릿 변수 치환용)
 

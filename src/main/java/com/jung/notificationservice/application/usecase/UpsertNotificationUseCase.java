@@ -2,7 +2,7 @@ package com.jung.notificationservice.application.usecase;
 
 import com.jung.notificationservice.domain.Notification;
 
-public interface SaveNotificationUseCase {
+public interface UpsertNotificationUseCase {
 
-    void saveIfAbsent(Notification notification);
+    void upsert(Notification notification);
 }

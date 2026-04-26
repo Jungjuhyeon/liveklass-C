@@ -59,4 +59,10 @@ public class NotificationAdapter implements NotificationOutputPort {
     public int markAsRead(Long id, LocalDateTime now) {
         return notificationJpaRepository.markAsRead(id, now);
     }
+
+    @Override
+    @Transactional
+    public int upsert(Notification notification) {
+        return notificationJpaRepository.upsert(notification);
+    }
 }

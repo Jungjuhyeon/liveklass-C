@@ -181,8 +181,8 @@ Exponential Backoff 방식을 사용하며 최대 3회 재시도한다.
 
 - `idempotency_key = SHA256(eventId:recipientId:notificationType:channel)` 로 생성
 - DB UNIQUE 제약을 걸어 동시 중복 요청을 DB 레벨에서 차단
-- 저장 전 `findByIdempotencyKey`로 중복 체크 → 이미 존재하면 저장하지 않고 skip
-- race condition 시 DB UNIQUE 제약이 최종 안전망 역할
+- `INSERT ... ON DUPLICATE KEY UPDATE` (UPSERT) 전략으로 중복 요청 시 예외 없이 무시
+- DB UNIQUE 제약이 원자적으로 중복을 방지하여 race condition에도 안전
 
 ### 7.2 처리 레벨 (CAS UPDATE)
 

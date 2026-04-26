@@ -23,4 +23,6 @@ public interface NotificationOutputPort {
     List<Notification> findByRecipientId(Long recipientId, Boolean isRead);
 
     int markAsRead(Long id, LocalDateTime now);
+
+    int upsert(Notification notification);
 }

@@ -258,7 +258,7 @@ FAILED ──(수동 재시도 API)──> PENDING  ※ retryCount = 0 초기화
 
 ### 4. 동일한 이벤트에 대해 알림이 중복 발송되면 안 됩니다
 
-- **요청 레벨**: `findByIdempotencyKey`로 사전 체크하여 대부분의 중복을 예외 없이 처리하고, DB UNIQUE 제약이 race condition에 대한 안전망 역할을 합니다.
+- **요청 레벨**: `INSERT ... ON DUPLICATE KEY UPDATE` (UPSERT) 전략으로 중복 요청 시 예외 없이 무시합니다. `idempotency_key` UNIQUE 제약이 DB 레벨에서 원자적으로 중복을 방지합니다.
 - **처리 레벨**: CAS UPDATE(`UPDATE WHERE status IN (PENDING, RETRYING)`)로 동시 처리 방지. affected_rows가 0이면 skip합니다.
 
 ## ✅ 설계 결정과 이유
@@ -386,7 +386,7 @@ FAILED 상태의 알림은 삭제되지 않고 DB에 보관되며, `lastErrorMes
 | 비즈니스 트랜잭션 영향 없음 | `AFTER_COMMIT` 이후 발송, 발송 실패가 비즈니스에 전파되지 않음 |
 | 예외 단순 무시 아님 | `markRetryingOrFailed()`로 RETRYING/FAILED 상태 관리 + `lastErrorMessage` 기록 |
 | 재시도 | Exponential Backoff (`2^retryCount`분, 최대 3회) |
-| 중복 발송 방지 | `idempotency_key` UNIQUE 제약 + `findByIdempotencyKey` 사전 체크 |
+| 중복 발송 방지 | `idempotency_key` UNIQUE 제약 + UPSERT (`ON DUPLICATE KEY UPDATE`) |
 | 동시 중복 처리 방지 | CAS UPDATE (`UPDATE WHERE status IN ('PENDING', 'RETRYING')`) |
 | PROCESSING 타임아웃 복구 | `NotificationRecoveryWorker` 5분마다 10분 초과 건 PENDING 복구 |
 | 서버 재시작 유실 없음 | DB 영속 저장 + `NotificationPollingWorker` 10초마다 재처리 |
